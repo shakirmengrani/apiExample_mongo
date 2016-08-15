@@ -1,7 +1,7 @@
 var express = require('express');
+var router = express.Router();
 var mongoose = require('mongoose');
 var posts = mongoose.model("posts");
-var router = express.Router();
 
 //Used for routes that must be authenticated.
 function isAuthenticated (req, res, next) {
@@ -13,7 +13,7 @@ function isAuthenticated (req, res, next) {
 	if(req.method === "GET"){
 		return next();
 	}
-	
+
 	if (req.isAuthenticated()){
 		return next();
 	}
@@ -30,31 +30,67 @@ router.route('/posts')
 
 	//create a new post
 	.post(function(req, res){
-
 		//TODO create a new post in the database
-		res.send({message:"TODO create a new post in the database"});
+			var post = new posts();
+			post.title = req.body.title;
+			post.text = req.body.text;
+			post.created_by = req.body.username;
+			post.save(function(err,doc){
+				if (err){
+					return res.send(500,err);
+				}
+				return res.json(doc);
+			});
 	})
 
 	.get(function(req, res){
-
 		//TODO get all the posts in the database
-		res.send({message:"TODO get all the posts in the database"});
-	})
+		posts.find(function(err,doc){
+			if (err){
+				return res.send(500,err);
+			}
+			return res.send(data);
+		});
+	});
 
 //api for a specfic post
 router.route('/posts/:id')
 
 	//create
 	.put(function(req,res){
-		return res.send({message:'TODO modify an existing post by using param ' + req.params.id});
+		posts.findById(req.params.id,function(err,doc){
+			if (err){
+				return res.send(500,err);
+			}
+			doc.title = req.body.title;
+			doc.text = req.body.text;
+			doc.created_by = req.body.username;
+			doc.save(function(err,doc){
+				if (err){
+					return res.send(500,err);
+				}
+				return res.json(doc);
+			});
+		});
+
 	})
 
 	.get(function(req,res){
-		return res.send({message:'TODO get an existing post by using param ' + req.params.id});
+		posts.findById(req.params.id,function(err,doc){
+			if (err){
+				return res.send(500,err);
+			}
+			return res.json(doc);
+		});
 	})
 
 	.delete(function(req,res){
-		return res.send({message:'TODO delete an existing post by using param ' + req.params.id})
+		posts.remove({_id:req.params.id},function(err,doc){
+			if(err){
+				return res.send(500,err);
+			}
+			return res.send("post were deleted :-(");
+		});
 	});
 
 module.exports = router;

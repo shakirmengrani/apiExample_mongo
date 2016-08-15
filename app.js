@@ -6,13 +6,14 @@ var passport = require('passport');
 var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+require('./models/models');
+var index = require('./routes/index');
 var api = require('./routes/api');
 var authenticate = require('./routes/authenticate')(passport);
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/chrip-test',function(err){
   if (err) throw err;
 });
-require('./models/models');
 var app = express();
 
 // view engine setup
@@ -31,10 +32,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 app.use(passport.session());
 
+var initPassport = require('./passport-init');
+initPassport(passport);
+
+app.use('/',index);
 app.use('/auth',authenticate);
 app.use ('/api',api);
-
-
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -44,9 +47,6 @@ app.use(function(req, res, next) {
 });
 
 // error handlers
-var initPassport = require('./passport-init');
-initPassport(passport);
-
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
