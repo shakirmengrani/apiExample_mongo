@@ -33,6 +33,8 @@
     "express": "~4.12.2",
     "express-jwt": "^3.4.0",
     "express-session": "^1.14.0",
+    "gulp": "^3.9.1",
+    "gulp-typescript": "^2.13.6",
     "jade": "~1.9.2",
     "mongodb": "^2.2.5",
     "mongoose": "^4.5.8",
