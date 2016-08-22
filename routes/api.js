@@ -49,7 +49,7 @@ router.route('/posts')
 			if (err){
 				return res.send(500,err);
 			}
-			return res.send(data);
+			return res.send(doc);
 		});
 	});
 
