@@ -1,8 +1,8 @@
 <h1>{{ title }}</h1>
 <ul class="nav nav-pills">
-    <li><a href="#">Home</a></li>
+    <li><a [routerLink]="['']">Home</a></li>
     <li><a *ngIf="loggedIn()" [routerLink]="['/posts']">posts</a></li>
-    <li><a *ngIf="!loggedIn()" (click)="login()">Login</a></li>
+    <li><a *ngIf="!loggedIn()" [routerLink]="['/login']">Login</a></li>
     <li><a *ngIf="loggedIn()" (click)="logout()">Logout</a></li>
 </ul>
 <br />
