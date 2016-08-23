@@ -48,7 +48,7 @@ initPassport(passport);
 app.get('/',function(req,res){
   return res.render("angular2");
 });
-console.log(path.join(__dirname, '/dist/app'));
+
 app.use('/app', express.static(path.join(__dirname, '/dist')));
 app.use('/node_modules', express.static(path.join(__dirname, '/node_modules')));
 app.use('/auth',authenticate);

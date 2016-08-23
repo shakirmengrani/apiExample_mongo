@@ -3,12 +3,10 @@ import { AuthGuard } from './auth-guard';
 import {App} from './app.component';
 import {login} from './login.component';
 import {OtherApp} from './other.component';
+import {posts} from './posts.component';
 
 export const appRoutes: RouterConfig = [
-  {
-  path: '',
-  component: login
-  },
+  
   {
     path: 'login',
     component: login,
@@ -16,8 +14,17 @@ export const appRoutes: RouterConfig = [
   {
     path: 'posts',
     canActivate: [AuthGuard],
-    component: OtherApp
+    component: posts
+  },
+  {
+  path: '',
+  component: OtherApp
   }
+  // ,
+  // {
+  //   path: '**',
+  //   component: login
+  // }
 ];
 
 // export const routing = RouterModule.forRoot(appRoutes);
