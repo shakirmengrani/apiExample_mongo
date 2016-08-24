@@ -3,7 +3,6 @@ var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var passport = require('passport');
-var jwt = require('express-jwt');
 var cors = require('cors');
 var session = require('express-session');
 var cookieParser = require('cookie-parser');
@@ -13,18 +12,20 @@ var index = require('./routes/index');
 var api = require('./routes/api');
 var authenticate = require('./routes/authenticate')(passport);
 var mongoose = require('mongoose');
+var firebase = require('firebase');
+
 mongoose.connect('mongodb://localhost:27017/chrip-test',function(err){
   if (err) throw err;
 });
-var app = express();
-app.use(cors());
 
-var jwtCheck =  jwt({
-  secret:  new Buffer("m1F01BykD-au6qcBfhKtMxiGhtTvXv7fdUS7HiJYuVI8A3TY7PzXyoGPtPer6wD-",'base64'),
-  audience: "gL4tLAdSGsGMGmMgjDX2DFFsqp3DAMYT"
+firebase.initializeApp({
+  serviceAccount: "./public/shakirmengrani-6ba0ca74896d.json",
+  databaseURL: "https://shakirmengrani-8c9b1.firebaseio.com"
 });
 
 
+var app = express();
+app.use(cors());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -49,14 +50,20 @@ app.get('/',function(req,res){
   return res.render("angular2");
 });
 
+app.get('/login/:token',function(req,res){
+  firebase.auth().verifyIdToken(req.params.token).then(function(token){
+    console.log(token.uid);
+    res.send("asd");
+  }).catch(function(error){
+    console.log(error); 
+  });
+  
+});
+
 app.use('/app', express.static(path.join(__dirname, '/dist')));
 app.use('/node_modules', express.static(path.join(__dirname, '/node_modules')));
 app.use('/auth',authenticate);
 app.use ('/api',api);
-app.use('/say',jwtCheck);
-app.get('/say',function(req,res){
-  res.send("Hello")
-});
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

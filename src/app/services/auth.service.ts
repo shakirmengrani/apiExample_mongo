@@ -3,16 +3,18 @@ import {Location} from '@angular/common';
 import {tokenNotExpired,JwtHelper} from 'angular2-jwt';
 import {AngularFire} from 'angularfire2'
 import 'rxjs/add/operator/toPromise';
-
+import {Headers, Http, Response, Request} from '@angular/http';
 @Injectable()
 export class AuthService{
     jwtHelper: JwtHelper = new JwtHelper();
     location: Location;
     ngZone: NgZone;
-    constructor(location: Location,ngZone: NgZone, public fire: AngularFire){
+    http: Http = null;
+    constructor(http: Http,location: Location,ngZone: NgZone, public fire: AngularFire){
         this.fire.auth.subscribe(auth => this._login(auth));
         this.location = location;
         this.ngZone = ngZone;
+        this.http = http;
     }
 
     private _login(auth: any): void{
@@ -24,6 +26,7 @@ export class AuthService{
                 this.jwtHelper.decodeToken(auth.google.idToken),
                 this.jwtHelper.getTokenExpirationDate(auth.google.idToken),
                 this.jwtHelper.isTokenExpired(auth.google.idToken)
+                this.http.get("/login/" + auth.google.idToken).toPromise().then(data => console.log(data));
                 this.ngZone.run(() => self.loggedIn());
             }
         }
