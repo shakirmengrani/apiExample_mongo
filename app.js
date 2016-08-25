@@ -19,7 +19,7 @@ mongoose.connect('mongodb://localhost:27017/chrip-test',function(err){
 });
 
 firebase.initializeApp({
-  serviceAccount: "./public/shakirmengrani-6ba0ca74896d.json",
+  serviceAccount: "shakirmengrani-6ba0ca74896d.json",
   databaseURL: "https://shakirmengrani-8c9b1.firebaseio.com"
 });
 
@@ -49,15 +49,19 @@ initPassport(passport);
 app.get('/',function(req,res){
   return res.render("angular2");
 });
-
+app.post('/login/access_token',function(req,res){
+  var token = firebase.auth().createCustomToken("Hello_Custom_User_Id");
+  res.send(token);
+});
 app.get('/login/:token',function(req,res){
-  firebase.auth().verifyIdToken(req.params.token).then(function(token){
-    console.log(token.uid);
-    
-  }).catch(function(error){
-    console.log(error); 
-  });
-  
+  // var myToken = "";
+  // firebase.auth().verifyIdToken(req.params.token).then(function(token){
+  //   myToken = token;
+  //   res.send(myToken);    
+  // }).catch(function(error){
+  //   console.log(error); 
+  // });
+  res.send("some uid");
 });
 
 app.use('/app', express.static(path.join(__dirname, '/dist')));

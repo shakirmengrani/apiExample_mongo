@@ -1,7 +1,7 @@
 import {Injectable,NgZone} from '@angular/core';
 import {Location} from '@angular/common';
 import {tokenNotExpired,JwtHelper} from 'angular2-jwt';
-import {AngularFire,AuthProviders,AuthMethods} from 'angularfire2'
+import {AngularFire,AuthProviders,AuthMethods,FirebaseAuth} from 'angularfire2'
 import {} from 'rxjs/add/operator/toPromise';
 import {Headers, Http, Response, Request} from '@angular/http';
 @Injectable()
@@ -20,12 +20,12 @@ export class AuthService{
     private _login(auth: any): void{
         var self = this;
         if (auth){
-            if (auth.google.idToken != undefined){
+            if (auth.google != undefined){
                 localStorage.setItem('profile', JSON.stringify(auth.google));
                 localStorage.setItem('id_token', auth.google.idToken);
-                this.jwtHelper.decodeToken(auth.google.idToken),
-                this.jwtHelper.getTokenExpirationDate(auth.google.idToken),
-                this.jwtHelper.isTokenExpired(auth.google.idToken)
+                this.jwtHelper.decodeToken(auth.google.idToken);
+                this.jwtHelper.getTokenExpirationDate(auth.google.idToken);
+                this.jwtHelper.isTokenExpired(auth.google.idToken);
                 this.http.get("/login/" + auth.google.idToken).toPromise().then(data => console.log(data));
                 this.ngZone.run(() => self.loggedIn());
             }
@@ -33,10 +33,9 @@ export class AuthService{
     }
 
     public login(): void {
-        this.fire.auth.login({
-            provider: AuthProviders.Anonymous,
-            method: AuthMethods.Anonymous
-        });
+        this.http.post("/login/access_token",{}).toPromise()
+        .then(data => this.fire.auth.login(data.text(),{provider:AuthProviders.Google,method:AuthMethods.Redirect}))
+        .catch(error => console.error(error));
     }
 
     public logout() {

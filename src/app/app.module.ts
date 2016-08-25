@@ -29,8 +29,8 @@ const myFirebaseConfig = {
         AuthService, 
         HTTP_PROVIDERS,
         bind(LocationStrategy).toClass(HashLocationStrategy),
-        // provide(AuthConfig, { useFactory: () => { return new AuthConfig(); } }),
-        // AuthHttp,
+        provide(AuthConfig, { useFactory: () => { return new AuthConfig(); } }),
+        AuthHttp,
         AuthGuard
         ],
     imports: [BrowserModule,RouterModule.forRoot(appRoutes),HttpModule,ReactiveFormsModule
