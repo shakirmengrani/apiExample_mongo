@@ -12,8 +12,8 @@ export class login {
         this.Auth = AuthService;
     }
 
-    public login(){
-        this.Auth.login();
+    public login(provider: String){
+        this.Auth.login(provider);
     }
     public loggedIn(){
         return this.Auth.loggedIn();

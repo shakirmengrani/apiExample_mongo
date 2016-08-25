@@ -10,16 +10,16 @@ function isAuthenticated (req, res, next) {
 	// request and response objects
 
 	//allow all get request methods
-	if(req.method === "GET"){
-		return next();
-	}
+	// if(req.method === "GET"){
+	// 	return next();
+	// }
 
-	if (req.isAuthenticated()){
+	// if (req.isAuthenticated()){
 		return next();
-	}
+	// }
 
 	// if the user is not authenticated then redirect him to the login page
-	return res.redirect('/auth/login');
+	// return res.redirect('/auth/login');
 };
 
 //Register the authentication middleware
@@ -34,7 +34,7 @@ router.route('/posts')
 			var post = new posts();
 			post.title = req.body.title;
 			post.text = req.body.text;
-			post.created_by = req.body.username;
+			post.created_by = req.body.created_by;
 			post.save(function(err,doc){
 				if (err){
 					return res.send(500,err);
@@ -64,7 +64,7 @@ router.route('/posts/:id')
 			}
 			doc.title = req.body.title;
 			doc.text = req.body.text;
-			doc.created_by = req.body.username;
+			doc.created_by = req.body.created_by;
 			doc.save(function(err,doc){
 				if (err){
 					return res.send(500,err);

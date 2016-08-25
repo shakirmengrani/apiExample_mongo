@@ -21,21 +21,41 @@ export class AuthService{
         var self = this;
         if (auth){
             if (auth.google != undefined){
-                localStorage.setItem('profile', JSON.stringify(auth.google));
-                localStorage.setItem('id_token', auth.google.idToken);
-                this.jwtHelper.decodeToken(auth.google.idToken);
-                this.jwtHelper.getTokenExpirationDate(auth.google.idToken);
-                this.jwtHelper.isTokenExpired(auth.google.idToken);
-                this.http.get("/login/" + auth.google.idToken).toPromise().then(data => console.log(data));
-                this.ngZone.run(() => self.loggedIn());
+                if(auth.google.idToken != undefined){
+                    localStorage.setItem('profile', JSON.stringify(auth.google));
+                    localStorage.setItem('id_token', auth.google.idToken);
+                    this.jwtHelper.decodeToken(auth.google.idToken);
+                    this.jwtHelper.getTokenExpirationDate(auth.google.idToken);
+                    this.jwtHelper.isTokenExpired(auth.google.idToken);
+                    // this.http.get("/login/" + auth.google.idToken).toPromise().then(data => console.log(data));
+                    this.ngZone.run(() => self.loggedIn());
+                } 
+            } else if(auth.facebook != undefined) {
+                if (auth.facebook.accessToken != undefined){
+                    localStorage.setItem('profile', JSON.stringify(auth.facebook));
+                    localStorage.setItem('id_token', auth.facebook.accessToken);
+                    this.jwtHelper.decodeToken(auth.facebook.accessToken);
+                    this.jwtHelper.getTokenExpirationDate(auth.facebook.accessToken);
+                    this.jwtHelper.isTokenExpired(auth.facebook.accessToken);
+                    // this.http.get("/login/" + auth.google.idToken).toPromise().then(data => console.log(data));
+                    this.ngZone.run(() => self.loggedIn());
+                }
             }
         }
     }
 
-    public login(): void {
-        this.http.post("/login/access_token",{}).toPromise()
-        .then(data => this.fire.auth.login(data.text(),{provider:AuthProviders.Google,method:AuthMethods.Redirect}))
-        .catch(error => console.error(error));
+    public login(provider: String): void {
+        switch(provider){
+            case "google":
+                this.fire.auth.login({provider:AuthProviders.Google,method:AuthMethods.Redirect})
+            break;
+            case "facebook":
+                this.fire.auth.login({provider:AuthProviders.Facebook,method:AuthMethods.Popup,remember: 'default',scope: ['email']})
+            break;
+            default:
+                this.fire.auth.login({provider:AuthProviders.Google,method:AuthMethods.Redirect})
+            break;
+        }
     }
 
     public logout() {
