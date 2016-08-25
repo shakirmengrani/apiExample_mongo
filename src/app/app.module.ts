@@ -4,13 +4,13 @@ import {App} from './app.component';
 import {OtherApp} from './other.component';
 import {login} from './login.component';
 import {posts} from './posts.component';
-import {HeroService} from './services/hero.service';
+import {postService} from './services/post.service';
 import { APP_ROUTER_PROVIDER, appRoutes } from './app.routes';
 import { AuthGuard } from './auth-guard'; 
 import { RouterModule } from '@angular/router';
 import { LocationStrategy, HashLocationStrategy} from '@angular/common';
 import { HttpModule, HTTP_PROVIDERS, Http } from '@angular/http';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import {  AuthHttp, AuthConfig } from 'angular2-jwt';
 import {AngularFireModule,AuthMethods,AuthProviders,defaultFirebase} from 'angularfire2'
 import {AuthService} from './services/auth.service';
@@ -29,8 +29,8 @@ enableProdMode();
 @NgModule({
     declarations: [App,OtherApp,login,posts],
     providers: [
+        postService,
         APP_ROUTER_PROVIDER,
-        HeroService,
         AuthService, 
         HTTP_PROVIDERS,
         bind(LocationStrategy).toClass(HashLocationStrategy),
@@ -38,7 +38,7 @@ enableProdMode();
         // AuthHttp,
         AuthGuard
         ],
-    imports: [BrowserModule,RouterModule.forRoot(appRoutes),HttpModule,FormsModule
+    imports: [BrowserModule,RouterModule.forRoot(appRoutes),HttpModule,ReactiveFormsModule
     ,AngularFireModule.initializeApp(myFirebaseConfig,myFirebaseAuthConfig)
     ],
     bootstrap:[App]
