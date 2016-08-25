@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import {Headers, Http, Response, Request} from '@angular/http';
-import {posts_model,postType} from '../model/posts'; 
+import {postType} from '../model/posts'; 
 @Injectable()
 export class postService{
+    public data: Array<postType>;
     constructor(private http:Http){
 
     }
@@ -13,7 +14,12 @@ export class postService{
         .catch(err => console.log(err));
     }
 
-
-
+    public createPost(args: postType): void {
+        this.data.unshift({
+            title: args.title,
+            text: args.text,
+            created_by: "Shakir Mengrani"
+        });
+    }
 
 }

@@ -21,11 +21,6 @@ const myFirebaseConfig = {
     storageBucket: "shakirmengrani-8c9b1.appspot.com",
 }
 
-const myFirebaseAuthConfig = {
-  provider: AuthProviders.Google,
-  method: AuthMethods.Redirect
-}
-enableProdMode();
 @NgModule({
     declarations: [App,OtherApp,login,posts],
     providers: [
@@ -39,7 +34,7 @@ enableProdMode();
         AuthGuard
         ],
     imports: [BrowserModule,RouterModule.forRoot(appRoutes),HttpModule,ReactiveFormsModule
-    ,AngularFireModule.initializeApp(myFirebaseConfig,myFirebaseAuthConfig)
+    ,AngularFireModule.initializeApp(myFirebaseConfig)
     ],
     bootstrap:[App]
 })

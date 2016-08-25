@@ -1,7 +1,7 @@
 import {Injectable,NgZone} from '@angular/core';
 import {Location} from '@angular/common';
 import {tokenNotExpired,JwtHelper} from 'angular2-jwt';
-import {AngularFire} from 'angularfire2'
+import {AngularFire,AuthProviders,AuthMethods} from 'angularfire2'
 import {} from 'rxjs/add/operator/toPromise';
 import {Headers, Http, Response, Request} from '@angular/http';
 @Injectable()
@@ -33,7 +33,10 @@ export class AuthService{
     }
 
     public login(): void {
-        this.fire.auth.login();
+        this.fire.auth.login({
+            provider: AuthProviders.Anonymous,
+            method: AuthMethods.Anonymous
+        });
     }
 
     public logout() {

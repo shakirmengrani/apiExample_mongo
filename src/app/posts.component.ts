@@ -19,15 +19,20 @@ export class posts implements OnInit{
             'myPost.txt_title': this.myPost.txt_title,
             'myPost.txt_post': this.myPost.txt_post
         });
-        
+        this.postService.getAllPost().then(data => this.postService.data = data).catch(err => console.error(err));        
     }
 
     ngOnInit():void {
-        this.postService.getAllPost().then(data => this.posts = data).catch(err => console.error(err));
+        
     }
 
     public onSubmit(): void {
-        console.log(this.myPost.txt_title);
+        this.postService.createPost({
+            title: this.myPost.txt_title.value,
+            text: this.myPost.txt_post.value
+        });
+        this.myPost.txt_title.setValue('');
+        this.myPost.txt_post.setValue('');
     }
     
 }

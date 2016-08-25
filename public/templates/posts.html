@@ -16,7 +16,7 @@
 
     </div>
 </div>
-<div class="panel panel-default col-lg-6 col-sm-offset-3" *ngFor="let item of posts">
+<div class="panel panel-default col-lg-6 col-sm-offset-3" *ngFor="let item of postService.data">
     <div class="panel-heading"><strong>{{ item.title }}</strong></div>
     <div class="panel-body">
         {{ item.text }}

@@ -53,7 +53,7 @@ app.get('/',function(req,res){
 app.get('/login/:token',function(req,res){
   firebase.auth().verifyIdToken(req.params.token).then(function(token){
     console.log(token.uid);
-    res.send("asd");
+    
   }).catch(function(error){
     console.log(error); 
   });
