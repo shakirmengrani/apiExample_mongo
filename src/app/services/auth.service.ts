@@ -1,32 +1,29 @@
 import {Injectable,NgZone} from '@angular/core';
 import {Location} from '@angular/common';
-import {tokenNotExpired,JwtHelper} from 'angular2-jwt';
-import {AngularFire,AuthProviders,AuthMethods,FirebaseAuth} from 'angularfire2'
+import {Router} from '@angular/router';
+import {AngularFire,AuthProviders,AuthMethods,FirebaseAuthState} from 'angularfire2'
 import {} from 'rxjs/add/operator/toPromise';
 import {Headers, Http, Response, Request} from '@angular/http';
 @Injectable()
 export class AuthService{
-    jwtHelper: JwtHelper = new JwtHelper();
     location: Location;
     ngZone: NgZone;
     http: Http = null;
-    constructor(http: Http,location: Location,ngZone: NgZone, public fire: AngularFire){
+    constructor(http: Http,location: Location,ngZone: NgZone,private router:Router, private fire: AngularFire){
         this.fire.auth.subscribe(auth => this._login(auth));
         this.location = location;
         this.ngZone = ngZone;
         this.http = http;
     }
 
-    private _login(auth: any): void{
+    private _login(auth: FirebaseAuthState): void{
         var self = this;
         if (auth){
+            localStorage.setItem("uid",auth.uid);
             if (auth.google != undefined){
                 if(auth.google.idToken != undefined){
                     localStorage.setItem('profile', JSON.stringify(auth.google));
                     localStorage.setItem('id_token', auth.google.idToken);
-                    this.jwtHelper.decodeToken(auth.google.idToken);
-                    this.jwtHelper.getTokenExpirationDate(auth.google.idToken);
-                    this.jwtHelper.isTokenExpired(auth.google.idToken);
                     // this.http.get("/login/" + auth.google.idToken).toPromise().then(data => console.log(data));
                     this.ngZone.run(() => self.loggedIn());
                 } 
@@ -34,9 +31,6 @@ export class AuthService{
                 if (auth.facebook.accessToken != undefined){
                     localStorage.setItem('profile', JSON.stringify(auth.facebook));
                     localStorage.setItem('id_token', auth.facebook.accessToken);
-                    this.jwtHelper.decodeToken(auth.facebook.accessToken);
-                    this.jwtHelper.getTokenExpirationDate(auth.facebook.accessToken);
-                    this.jwtHelper.isTokenExpired(auth.facebook.accessToken);
                     // this.http.get("/login/" + auth.google.idToken).toPromise().then(data => console.log(data));
                     this.ngZone.run(() => self.loggedIn());
                 }
@@ -62,12 +56,17 @@ export class AuthService{
       var self = this;
       localStorage.removeItem('profile');
       localStorage.removeItem('id_token');
+      localStorage.removeItem("uid");
       this.fire.auth.logout();
       this.ngZone.run(() => self.loggedIn());
     }
 
     public loggedIn() {
-      return tokenNotExpired();
+        let uid = localStorage.getItem("uid");
+        if(this.router.url == "/login" && uid != null){
+            this.router.navigate(['/']);
+        }
+      return uid;
     }
 
     public isActive(path) {

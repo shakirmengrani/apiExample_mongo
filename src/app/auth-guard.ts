@@ -1,4 +1,3 @@
-import {tokenNotExpired} from 'angular2-jwt';
 import { Injectable } from '@angular/core';
 import {
   CanActivate,
@@ -9,11 +8,10 @@ import {
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-
   constructor(private router: Router) {}
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    if (tokenNotExpired()) {
+    if (localStorage.getItem("uid") != undefined) {
       return true;
     }
 
