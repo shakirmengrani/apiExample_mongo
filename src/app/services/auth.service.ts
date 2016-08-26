@@ -1,4 +1,4 @@
-import {Injectable,NgZone} from '@angular/core';
+import {Injectable,NgZone,EventEmitter} from '@angular/core';
 import {Location} from '@angular/common';
 import {Router} from '@angular/router';
 import {AngularFire,AuthProviders,AuthMethods,FirebaseAuthState} from 'angularfire2'
@@ -9,15 +9,33 @@ export class AuthService{
     location: Location;
     ngZone: NgZone;
     http: Http = null;
+    private _email: string = "";
+    private _password: string = "";
+    public err:any = null;
     constructor(http: Http,location: Location,ngZone: NgZone,private router:Router, private fire: AngularFire){
-        this.fire.auth.subscribe(auth => this._login(auth));
         this.location = location;
         this.ngZone = ngZone;
         this.http = http;
+        this.fire.auth.subscribe(auth => this._login(auth));
+        // this.fire.auth.error("asd");
+        this.fire.auth.toPromise().then(data => console.log({
+            "messageShakir": data
+        })).catch(err => console.error({
+            "messageShakir": err 
+        }));
+    }
+
+    public setEmail(value: string): void {
+        this._email = value;
+    }
+
+    public setPassword(value: string): void {
+        this._password = value;
     }
 
     private _login(auth: FirebaseAuthState): void{
         var self = this;
+        console.log(auth);
         if (auth){
             localStorage.setItem("uid",auth.uid);
             if (auth.google != undefined){
@@ -38,18 +56,23 @@ export class AuthService{
         }
     }
 
-    public login(provider: String): void {
+    public login(provider: String): Promise<FirebaseAuthState> {
+        var logon: Promise<FirebaseAuthState>;
         switch(provider){
             case "google":
-                this.fire.auth.login({provider:AuthProviders.Google,method:AuthMethods.Redirect})
+                logon = this.fire.auth.login({provider:AuthProviders.Google,method:AuthMethods.Redirect});
             break;
             case "facebook":
-                this.fire.auth.login({provider:AuthProviders.Facebook,method:AuthMethods.Popup,remember: 'default',scope: ['email']})
+                logon = this.fire.auth.login({provider:AuthProviders.Facebook,method:AuthMethods.Redirect,remember: 'default',scope: ['email']});
+            break;
+            case "custom":
+                logon = this.fire.auth.login({email: this._email,password: this._password},{provider: AuthProviders.Password,method: AuthMethods.Password});
             break;
             default:
-                this.fire.auth.login({provider:AuthProviders.Google,method:AuthMethods.Redirect})
+               logon = this.fire.auth.login({provider:AuthProviders.Google,method:AuthMethods.Redirect});
             break;
         }
+        return logon;
     }
 
     public logout() {

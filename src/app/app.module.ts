@@ -1,6 +1,6 @@
 import {NgModule, bind,provide,enableProdMode} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
-import {App} from './app.component';
+import {App} from './app';
 import {OtherApp} from './other.component';
 import {login} from './login.component';
 import {posts} from './posts.component';
@@ -30,7 +30,8 @@ const myFirebaseConfig = {
         bind(LocationStrategy).toClass(HashLocationStrategy),
         AuthGuard
         ],
-    imports: [BrowserModule,RouterModule.forRoot(appRoutes),HttpModule,ReactiveFormsModule
+    imports: [BrowserModule,
+    RouterModule.forRoot(appRoutes),HttpModule,ReactiveFormsModule
     ,AngularFireModule.initializeApp(myFirebaseConfig)
     ],
     bootstrap:[App]

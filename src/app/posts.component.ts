@@ -1,11 +1,47 @@
 import {Component, OnInit} from '@angular/core';
 import {posts_model,postType} from './model/posts';
 import {postService} from './services/post.service';
+import {TruncatePipe} from './pipes/truncate';
 import {FormBuilder,FormGroup,FormControl, Validators,Validator} from '@angular/forms';
 @Component({
     selector: 'App',
     viewProviders:[FormBuilder],
-    templateUrl: 'templates/posts.html'
+    pipes:[TruncatePipe],
+    template: `
+<div class="row">    
+    <div class="col-lg-6 col-md-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading">Post Form  <input type="hidden" [formControl]="myPost.txt_id" /><button class="btn btn-info col-sm-offset-6" (click)="newPost()">Add New</button></div>
+            <div class="panel-body">
+                <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+                    <div class="col-lg-12 form-group">
+                        <label>Title</label><br />
+                        <input type="text" class="form-control" [formControl]="myPost.txt_title" placeholder="Title" />
+                    </div>
+                    <div class="col-lg-12 form-group">
+                        <label>Text</label><br />
+                        <textarea class="form-control" [formControl]="myPost.txt_post" rows="8"></textarea>
+                    </div>
+                    <div class="col-lg-12 form-group">
+                        <button class="btn btn-default" type="submit" [disabled]="!myForm.valid">Submit</button>
+                    </div>
+                </form>
+            </div>
+            <div class="panel-footer"></div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-6">
+        <div class="panel panel-default" *ngFor="let item of postService.data">
+            <div class="panel-heading"><strong>{{ item.title | truncate:[50] }} </strong></div>
+            <div class="panel-body">
+                {{ item.text }}
+            </div>
+            <div class="panel-footer" align="right">
+                <button *ngIf="item._id" class="btn btn-warning" (click)="editClick(item._id)"><i class="fa fa-edit"></i> edit</button> | <a href="#"> {{ item.created_at | date:'MMMM, d-y' }} | {{ item.created_by }}</a>
+            </div>
+        </div>
+    </div>
+</div>`
 })
 export class posts implements OnInit{
     myPost: posts_model;

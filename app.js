@@ -47,6 +47,7 @@ var initPassport = require('./passport-init');
 initPassport(passport);
 
 app.get('/',function(req,res){
+  
   return res.render("angular2");
 });
 app.post('/login/access_token',function(req,res){
