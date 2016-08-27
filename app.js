@@ -14,9 +14,9 @@ var authenticate = require('./routes/authenticate')(passport);
 var mongoose = require('mongoose');
 var firebase = require('firebase');
 
-mongoose.connect('mongodb://localhost:27017/chrip-test',function(err){
-  if (err) throw err;
-});
+// mongoose.connect('mongodb://localhost:27017/chrip-test',function(err){
+//   if (err) throw err;
+// });
 
 firebase.initializeApp({
   serviceAccount: "shakirmengrani-6ba0ca74896d.json",

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {Headers, Http, Response, Request} from '@angular/http';
 import {postType} from '../model/posts';
-import {AuthHttp,AuthConfig} from 'angular2-jwt'; 
+
 @Injectable()
 export class postService{
     public data: Array<postType>;
@@ -40,6 +40,4 @@ export class postService{
         .then(data => data.json() as postType)
         .catch(err => console.error(err));
     } 
-
-
 }
