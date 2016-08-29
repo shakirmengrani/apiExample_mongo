@@ -13,19 +13,28 @@ var api = require('./routes/api');
 var authenticate = require('./routes/authenticate')(passport);
 var mongoose = require('mongoose');
 var firebase = require('firebase');
-
+var io = require("socket.io")(app);
 // mongoose.connect('mongodb://localhost:27017/chrip-test',function(err){
 //   if (err) throw err;
 // });
 
-firebase.initializeApp({
-  serviceAccount: "shakirmengrani-6ba0ca74896d.json",
-  databaseURL: "https://shakirmengrani-8c9b1.firebaseio.com"
-});
+// firebase.initializeApp({
+//   serviceAccount: "shakirmengrani-6ba0ca74896d.json",
+//   databaseURL: "https://shakirmengrani-8c9b1.firebaseio.com"
+// });
 
 
 var app = express();
 app.use(cors());
+
+// socket io start
+  io.on('connection',function(sock){
+     sock.emit('news',{ say: 'Hello User' });
+  });
+
+// socket io end
+
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
