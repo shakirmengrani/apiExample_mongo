@@ -27,8 +27,8 @@ export class posts_model implements iPost{
     
     constructor(){
         this.txt_id = new FormControl(''); 
-        this.txt_title = new FormControl('',Validators.required);
-        this.txt_post = new FormControl('',Validators.required);
+        this.txt_title = new FormControl('',[Validators.required])
+        this.txt_post = new FormControl('',[Validators.required]);
     }
 
 }

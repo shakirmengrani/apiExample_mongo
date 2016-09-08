@@ -6,7 +6,6 @@ import {FormBuilder,FormGroup,FormControl, Validators,Validator} from '@angular/
 @Component({
     selector: 'App',
     viewProviders:[FormBuilder],
-    pipes:[TruncatePipe],
     templateUrl: '/templates/post.firebase.html'
 })
 export class posts implements OnInit{
@@ -18,14 +17,15 @@ export class posts implements OnInit{
     isNew: boolean = true;
 
     constructor(fb: FormBuilder,private postService:postService){
+        this.postService.getAllPost(db => this.postService.data = db);
         this.fb = fb;
         this.myPost = new posts_model();
         this.myForm = this.fb.group({
-            'myPost.txt_id': this.myPost.txt_id,
-            'myPost.txt_title': this.myPost.txt_title,
-            'myPost.txt_post': this.myPost.txt_post
+            'txt_id': this.myPost.txt_id,
+            'txt_title': this.myPost.txt_title,
+            'txt_post': this.myPost.txt_post
         });
-        this.postService.getAllPost(db => this.postService.data = db);        
+                
     }
 
     ngOnInit():void {

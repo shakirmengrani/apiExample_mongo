@@ -1,8 +1,8 @@
-import {Injectable,NgZone,EventEmitter} from '@angular/core';
+import {Injectable,NgZone,EventEmitter,Inject} from '@angular/core';
 import {Location} from '@angular/common';
 import {Router} from '@angular/router';
-import {AngularFire,AuthProviders,AuthMethods,FirebaseAuthState} from 'angularfire2'
-import {} from 'rxjs/add/operator/toPromise';
+import {AngularFire,AuthProviders,AuthMethods,FirebaseAuthState, FirebaseAuth} from 'angularfire2'
+// import { toPromise } from 'rxjs/add/operator/toPromise';
 import {Headers, Http, Response, Request} from '@angular/http';
 @Injectable()
 export class AuthService{
@@ -12,17 +12,11 @@ export class AuthService{
     private _email: string = "";
     private _password: string = "";
     public err:any = null;
-    constructor(http: Http,location: Location,ngZone: NgZone,private router:Router, private fire: AngularFire){
+    constructor(http: Http,location: Location,ngZone: NgZone,private router:Router,@Inject(FirebaseAuth) public fireAuth: FirebaseAuth){
         this.location = location;
         this.ngZone = ngZone;
         this.http = http;
-        this.fire.auth.subscribe(auth => this._login(auth));
-        // this.fire.auth.error("asd");
-        this.fire.auth.toPromise().then(data => console.log({
-            "messageShakir": data
-        })).catch(err => console.error({
-            "messageShakir": err 
-        }));
+        this.fireAuth.subscribe(auth => this._login(auth),err => console.error(err));
     }
 
     public setEmail(value: string): void {
@@ -35,7 +29,7 @@ export class AuthService{
 
     private _login(auth: FirebaseAuthState): void{
         var self = this;
-        console.log(auth);
+        console.log("shakir: " + auth);
         if (auth){
             localStorage.setItem("uid",auth.uid);
             if (auth.google != undefined){
@@ -60,16 +54,16 @@ export class AuthService{
         var logon: Promise<FirebaseAuthState>;
         switch(provider){
             case "google":
-                logon = this.fire.auth.login({provider:AuthProviders.Google,method:AuthMethods.Redirect});
+                logon = this.fireAuth.login({provider:AuthProviders.Google,method:AuthMethods.Redirect});
             break;
             case "facebook":
-                logon = this.fire.auth.login({provider:AuthProviders.Facebook,method:AuthMethods.Redirect,remember: 'default',scope: ['email']});
+                logon = this.fireAuth.login({provider:AuthProviders.Facebook,method:AuthMethods.Redirect,remember: 'default',scope: ['email']});
             break;
             case "custom":
-                logon = this.fire.auth.login({email: this._email,password: this._password},{provider: AuthProviders.Password,method: AuthMethods.Password});
+                logon = this.fireAuth.login({email: this._email,password: this._password},{provider: AuthProviders.Password,method: AuthMethods.Password});
             break;
             default:
-               logon = this.fire.auth.login({provider:AuthProviders.Google,method:AuthMethods.Redirect});
+               logon = this.fireAuth.login({provider:AuthProviders.Google,method:AuthMethods.Redirect});
             break;
         }
         return logon;
@@ -80,12 +74,12 @@ export class AuthService{
       localStorage.removeItem('profile');
       localStorage.removeItem('id_token');
       localStorage.removeItem("uid");
-      this.fire.auth.logout();
+      this.fireAuth.logout();
       this.ngZone.run(() => self.loggedIn());
     }
 
     public loggedIn() {
-        let uid = localStorage.getItem("uid");
+        let uid = firebase.auth().currentUser != null ? firebase.auth().currentUser.uid : null; //localStorage.getItem("uid");
         if(this.router.url == "/login" && uid != null){
             this.router.navigate(['/']);
         }

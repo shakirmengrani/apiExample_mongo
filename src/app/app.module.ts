@@ -1,4 +1,4 @@
-import {NgModule, bind,provide,enableProdMode} from '@angular/core';
+import {NgModule,enableProdMode} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {App} from './app';
 import {OtherApp} from './other.component';
@@ -9,7 +9,7 @@ import { APP_ROUTER_PROVIDER, appRoutes } from './app.routes';
 import { AuthGuard } from './auth-guard'; 
 import { RouterModule } from '@angular/router';
 import { LocationStrategy, HashLocationStrategy} from '@angular/common';
-import { HttpModule, HTTP_PROVIDERS, Http } from '@angular/http';
+import { HttpModule,JsonpModule, Http } from '@angular/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import {AngularFireModule,AuthMethods,AuthProviders,defaultFirebase,FIREBASE_PROVIDERS} from 'angularfire2'
 import {AuthService} from './services/auth.service';
@@ -22,18 +22,11 @@ const myFirebaseConfig = {
 
 @NgModule({
     declarations: [App,OtherApp,login,posts],
-    providers: [
-        postService,
-        APP_ROUTER_PROVIDER,
-        AuthService, 
-        HTTP_PROVIDERS,
-        bind(LocationStrategy).toClass(HashLocationStrategy),
-        AuthGuard
-        ],
-    imports: [BrowserModule,
-    RouterModule.forRoot(appRoutes),HttpModule,ReactiveFormsModule
+    imports: [BrowserModule,HttpModule,JsonpModule,
+    RouterModule.forRoot(appRoutes,{ useHash: true }),HttpModule,ReactiveFormsModule
     ,AngularFireModule.initializeApp(myFirebaseConfig)
     ],
+    providers: [postService,FIREBASE_PROVIDERS,APP_ROUTER_PROVIDER,AuthService, AuthGuard],
     bootstrap:[App]
 })
  

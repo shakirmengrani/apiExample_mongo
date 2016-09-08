@@ -1,10 +1,10 @@
-import { RouterConfig, provideRoutes, Router } from '@angular/router';
+import { provideRoutes, Router } from '@angular/router';
 import { AuthGuard } from './auth-guard';
 import {login} from './login.component';
 import {OtherApp} from './other.component';
 import {posts} from './posts.firebase.component';
 
-export const appRoutes: RouterConfig = [
+export const appRoutes = [
   
   {
     path: 'login',
