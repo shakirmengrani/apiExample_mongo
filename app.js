@@ -13,7 +13,6 @@ var api = require('./routes/api');
 var authenticate = require('./routes/authenticate')(passport);
 var mongoose = require('mongoose');
 var firebase = require('firebase');
-var io = require("socket.io")(app);
 // mongoose.connect('mongodb://localhost:27017/chrip-test',function(err){
 //   if (err) throw err;
 // });
@@ -26,11 +25,6 @@ var io = require("socket.io")(app);
 
 var app = express();
 app.use(cors());
-
-// socket io start
-  io.on('connection',function(sock){
-     sock.emit('news',{ say: 'Hello User' });
-  });
 
 // socket io end
 
