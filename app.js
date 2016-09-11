@@ -13,6 +13,8 @@ var api = require('./routes/api');
 var authenticate = require('./routes/authenticate')(passport);
 var mongoose = require('mongoose');
 var firebase = require('firebase');
+var arduino = require('arduino-firmata');
+var mqttoverws = require('mqtt_over_websockets');
 // mongoose.connect('mongodb://localhost:27017/chrip-test',function(err){
 //   if (err) throw err;
 // });
@@ -25,10 +27,48 @@ var firebase = require('firebase');
 
 var app = express();
 app.use(cors());
+// arduino board start
+var board = new arduino();
+board.connect();
+board.on('connect',function(){
+  console.log("Board connected at " + board.path);
+});
+var digitalWrite = (pin,io) => {
+   board.digitalWrite(pin,io);
+};
 
-// socket io end
+// arduino board end
 
+// mqtt start
+var mqtt_msg = "";
+var client = new  mqttoverws.Client("127.0.0.1",61614,"hello");
 
+client.onConnectionLost = () => { console.log("Connection was lost !"); };
+
+client.onMessageArrived = (message) => { 
+  let pin  = message.destinationName;
+  let io = message.payloadString;
+  if (pin == "led"){
+    pin = 13;
+    digitalWrite(pin, parseInt(message.payloadString));
+  }
+};
+
+client.connect({
+  onSuccess: () => { 
+    console.log("Broker Connected !");
+    client.subscribe("led",{
+      onSuccess: () => {
+        console.log("led channel subscribed !");
+      },
+      onFailure: (err) => {
+        console.error(err);
+      }
+    })
+ },
+  onFailure: (err) => { console.error(err); }
+});
+// mqtt end
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -50,9 +90,13 @@ var initPassport = require('./passport-init');
 initPassport(passport);
 
 app.get('/',function(req,res){
-  
+
   return res.render("angular2");
 });
+app.get('/mqtt',function(req,res){
+  return res.send(mqtt_msg);
+});
+
 app.post('/login/access_token',function(req,res){
   var token = firebase.auth().createCustomToken("Hello_Custom_User_Id");
   res.send(token);
@@ -61,9 +105,9 @@ app.get('/login/:token',function(req,res){
   // var myToken = "";
   // firebase.auth().verifyIdToken(req.params.token).then(function(token){
   //   myToken = token;
-  //   res.send(myToken);    
+  //   res.send(myToken);
   // }).catch(function(error){
-  //   console.log(error); 
+  //   console.log(error);
   // });
   res.send("some uid");
 });

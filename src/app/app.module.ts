@@ -2,6 +2,7 @@ import {NgModule,enableProdMode} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {App} from './app';
 import {OtherApp} from './other.component';
+import {board} from './board.component';
 import {login} from './login.component';
 import {posts} from './posts.firebase.component';
 import {postService} from './services/post.firebase.service';
@@ -21,7 +22,7 @@ const myFirebaseConfig = {
 }
 
 @NgModule({
-    declarations: [App,OtherApp,login,posts],
+    declarations: [App,OtherApp,login,posts,board],
     imports: [BrowserModule,HttpModule,JsonpModule,
     RouterModule.forRoot(appRoutes,{ useHash: true }),HttpModule,ReactiveFormsModule
     ,AngularFireModule.initializeApp(myFirebaseConfig)

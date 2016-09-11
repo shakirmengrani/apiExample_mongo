@@ -1,0 +1,25 @@
+<div class="row">    
+    <div class="col-lg-6 col-md-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading">{{ status }} </div>
+            <div class="panel-body">
+                <form [formGroup]="FGroup" (ngSubmit)="onsubmit()">
+                    <div class="col-lg-12 form-group">
+                        <label>Select Pin</label><br />
+                        <select formControlName="pin" class="form-control">
+                            <option value="led"> Led </option>
+                        </select>
+                    </div>
+                    <div class="col-lg-12 form-group">
+                        <label>Enter Value</label><br />
+                        <input type="number" formControlName="io" required class="form-control" />
+                    </div>
+                    <div class="col-lg-12 form-group">
+                        <button class="btn btn-default" type="submit" [disabled]="!FGroup.valid">Submit</button>
+                    </div>
+                </form>
+            </div>
+            <div class="panel-footer"></div>
+        </div>
+    </div>
+</div>
