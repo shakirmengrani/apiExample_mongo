@@ -30,4 +30,8 @@ gulp.task('watch',['transplie'],function(){
     gulp.watch(paths.src,['transplie']);
 });
 
+gulp.task('travis',function(){
+    process.exit(0);
+});
+
 gulp.task('default',['watch','transplie']);

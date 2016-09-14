@@ -1,0 +1,11 @@
+language: node_js
+node_js:
+ - "6"
+before_script:
+ - npm install -g gulp
+ script: gulp travis
+ services: 
+ - mongodb
+ env:
+  - node_env="development"
+  - node_env="production";SESSION_SECRET="blow fish"
